@@ -5,6 +5,7 @@
 debug
 *.pprof
 *.memprof
+target/
 
 
 

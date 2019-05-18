@@ -52,7 +52,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>com.hank.example.JavaWordCount</mainClass>
+              <mainClass>com.hank.example.WordCountCluster</mainClass>
             </manifest>
           </archive>
         </configuration>

@@ -1,1 +1,2 @@
-com\hank\example\JavaWordCount.class
+com\hank\example\WordCountCluster.class
+com\hank\example\WordCountLocal.class

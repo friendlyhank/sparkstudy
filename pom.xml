@@ -51,6 +51,13 @@
       <version>${spark.version}</version>
     </dependency>
 
+    <!-- spark kafka-->
+    <dependency>
+      <groupId>org.apache.spark</groupId>
+      <artifactId>spark-streaming-kafka-0-10_${scala.version}</artifactId>
+      <version>${spark.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -64,7 +71,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>com.hank.example.WordCountCluster</mainClass>
+              <mainClass>com.hank.example.KafkaWordCount</mainClass>
             </manifest>
           </archive>
         </configuration>

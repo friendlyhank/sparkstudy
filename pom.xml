@@ -78,7 +78,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>com.hank.example.KafkaWordCount</mainClass>
+              <mainClass>com.hank.example.ParallelizeCollection</mainClass>
             </manifest>
           </archive>
         </configuration>

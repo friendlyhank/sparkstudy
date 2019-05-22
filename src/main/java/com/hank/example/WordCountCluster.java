@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * spark集群中运行
+ * spark集群中运行WrodCount
  */
 
 public class WordCountCluster {

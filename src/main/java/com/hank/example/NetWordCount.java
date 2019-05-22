@@ -9,6 +9,10 @@ import scala.Tuple2;
 
 import java.util.Arrays;
 
+/**
+ * Socket连接案例计算WordCount
+ */
+
 public class NetWordCount {
     public static void main(String[] args)throws InterruptedException {
         //创建JavaStreamingContext

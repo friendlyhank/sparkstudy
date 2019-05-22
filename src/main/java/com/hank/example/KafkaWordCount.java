@@ -1,5 +1,6 @@
 package com.hank.example;
 
+import com.hank.example.util.HbaseUtil;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
@@ -15,6 +16,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+ * Kafka计算api调用QPS并存入Hbase
+ */
 
 public class KafkaWordCount {
     public static void main(String[] args) throws InterruptedException{
@@ -58,6 +63,9 @@ public class KafkaWordCount {
                     }
                 }
                 System.out.println("count value ====="+count);
+
+                //保存至Hbase
+                HbaseUtil.addQps(count);
             });
         });
 

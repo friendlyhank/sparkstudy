@@ -56,9 +56,10 @@ public class TransformationOperation {
         //JavaSparkContext
         JavaSparkContext sc = new JavaSparkContext(conf);
 
-        List<Integer> numbers = Arrays.asList(1,2,3,4,5,6,7,8,9);
+        List<Integer> numbers = Arrays.asList(1,2,3,4,5,6,7,8,9,10);
         JavaRDD<Integer> numberRdd = sc.parallelize(numbers);
 
+        //filter返回类型事Boolean,返回true则保留元素，返回false,则不想保留该元素
         JavaRDD<Integer> answer = numberRdd.filter(new Function<Integer, Boolean>() {
             @Override
             public Boolean call(Integer integer) throws Exception {

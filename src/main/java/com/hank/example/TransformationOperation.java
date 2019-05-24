@@ -3,10 +3,12 @@ package com.hank.example;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -15,7 +17,8 @@ import java.util.List;
 public class TransformationOperation {
     public static void main(String[] args) {
 //        map();
-        filter();
+//        filter();
+        flatmap();
     }
 
     /**
@@ -73,5 +76,33 @@ public class TransformationOperation {
                 System.out.println(integer);
             }
         });
+    }
+
+    /**
+     * flatMap转化:将文本行拆分为多个单词
+     */
+    private static void flatmap(){
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("flatmap");
+
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        List<String> lineList = Arrays.asList("Hello you","hello me","hello word");
+
+        JavaRDD<String> lines = sc.parallelize(lineList);
+
+        JavaRDD<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
+            @Override
+            public Iterator<String> call(String t) throws Exception {
+                return Arrays.asList(t.split(" ")).iterator();
+            }
+        });
+
+        words.foreach(new VoidFunction<String>() {
+            @Override
+            public void call(String s) throws Exception {
+                System.out.println(s);
+            }
+        });
+
     }
 }

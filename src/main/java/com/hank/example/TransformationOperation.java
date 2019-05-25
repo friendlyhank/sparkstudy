@@ -24,7 +24,8 @@ public class TransformationOperation {
 //        flatmap();
 //        groupByKey();
 //        reduceByKey();
-        join();
+//        join();
+        cogroup();
     }
 
     /**
@@ -229,5 +230,48 @@ public class TransformationOperation {
             }
         });
         sc.close();
+    }
+
+    /**
+     * 两个PairRdd操作
+     * cogroup案例: 打印学生成绩
+     * {(1,2),(3,4),(3,6)} other{(3,9)}
+     * {(1,([2].[]),(3,([4,6],[9])}
+     */
+    private static void cogroup(){
+        SparkConf conf = new SparkConf().setAppName("cogroup").setMaster("local");
+
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        List<Tuple2<Integer,String>> studentList = Arrays.asList(
+                new Tuple2<Integer, String>(1,"leo"),
+                new Tuple2<Integer,String>(2,"jack"),
+                new Tuple2<Integer,String>(3,"tom")
+        );
+
+        List<Tuple2<Integer,Integer>> scoreList = Arrays.asList(
+                new Tuple2<Integer, Integer>(1,100),
+                new Tuple2<Integer,Integer>(2,90),
+                new Tuple2<Integer,Integer>(3,60),
+                new Tuple2<Integer,Integer>(1,70),
+                new Tuple2<Integer,Integer>(2,80),
+                new Tuple2<Integer,Integer>(3,50)
+        );
+
+        //并行化两个RDD
+        JavaPairRDD<Integer,String> students = sc.parallelizePairs(studentList);
+
+        JavaPairRDD<Integer,Integer> scores = sc.parallelizePairs(scoreList);
+
+        JavaPairRDD<Integer,Tuple2<Iterable<String>,Iterable<Integer>>> studentScores =students.cogroup(scores);
+
+        studentScores.foreach(new VoidFunction<Tuple2<Integer, Tuple2<Iterable<String>, Iterable<Integer>>>>() {
+            @Override
+            public void call(Tuple2<Integer, Tuple2<Iterable<String>, Iterable<Integer>>> t) throws Exception {
+                System.out.println("student id："+t._1);
+                System.out.println("student name："+t._2._1);
+                System.out.println("student score："+t._2._2);
+            }
+        });
     }
 }

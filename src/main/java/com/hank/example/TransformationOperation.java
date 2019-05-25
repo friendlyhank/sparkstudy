@@ -1,11 +1,13 @@
 package com.hank.example;
 
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.VoidFunction;
+import scala.Tuple2;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -18,7 +20,8 @@ public class TransformationOperation {
     public static void main(String[] args) {
 //        map();
 //        filter();
-        flatmap();
+//        flatmap();
+        groupByKey();
     }
 
     /**
@@ -47,6 +50,8 @@ public class TransformationOperation {
                 System.out.println(t);
             }
         });
+        //关闭JavaSparkContext
+        sc.close();
     }
 
     /**
@@ -76,6 +81,8 @@ public class TransformationOperation {
                 System.out.println(integer);
             }
         });
+        //关闭JavaSparkContext
+        sc.close();
     }
 
     /**
@@ -103,6 +110,45 @@ public class TransformationOperation {
                 System.out.println(s);
             }
         });
+        //关闭JavaSparkContext
+        sc.close();
+    }
 
+    /**
+     * 键值对groupByKey，按照班级对成绩进行排序
+     */
+    public static void groupByKey(){
+        //创建SpackConf
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("groupByKey");
+
+        //JavaSparkContext
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        //模拟集合创建键值对
+        List<Tuple2<String,Integer>> sorceList = Arrays.asList(
+                new Tuple2<String,Integer>("class1",80),
+                new Tuple2<String,Integer>("class2",75),
+                new Tuple2<String,Integer>("class1",90),
+                new Tuple2<String,Integer>("class2",65)
+        );
+
+        JavaPairRDD<String,Integer> scores =sc.parallelizePairs(sorceList);
+
+        JavaPairRDD<String, Iterable<Integer>> groupedScores = scores.groupByKey();
+
+        groupedScores.foreach(new VoidFunction<Tuple2<String, Iterable<Integer>>>() {
+            @Override
+            public void call(Tuple2<String, Iterable<Integer>> t) throws Exception {
+                System.out.println("class: "+t._1());
+
+                Iterator<Integer> ite = t._2().iterator();
+                while(ite.hasNext()){
+                    System.out.println(ite.next());
+                }
+                System.out.println("==============================");
+            }
+        });
+        //关闭JavaSparkContext
+        sc.close();
     }
 }

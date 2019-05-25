@@ -23,7 +23,8 @@ public class TransformationOperation {
 //        filter();
 //        flatmap();
 //        groupByKey();
-        reduceByKey();
+//        reduceByKey();
+        join();
     }
 
     /**
@@ -157,7 +158,7 @@ public class TransformationOperation {
     /**
      * 键值对reduceByKey:统计每个班级的总分
      */
-    public static void reduceByKey(){
+    private static void reduceByKey(){
         SparkConf conf = new SparkConf().setMaster("local").setAppName("reduceByKey");
 
         JavaSparkContext sc = new JavaSparkContext(conf);
@@ -187,5 +188,46 @@ public class TransformationOperation {
                 System.out.println(t._1+":"+t._2);
             }
         });
+    }
+
+    /**
+     * 两个PairRdd操作
+     * 比如有(1, 1) (1, 2) (1, 3)的一个RDD
+     * 			// 还有一个(1, 4) (2, 1) (2, 2)的一个RDD
+     * 			// join以后，实际上会得到(1 (1, 4)) (1, (2, 4)) (1, (3, 4))
+     */
+    private static void join(){
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("join");
+
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        //键值对
+        List<Tuple2<Integer,String>> studentList = Arrays.asList(
+                new Tuple2<Integer,String>(1,"leo"),
+                new Tuple2<Integer,String>(2,"jack"),
+                new Tuple2<Integer,String>(3,"tom")
+        );
+
+        List<Tuple2<Integer,Integer>> scoreList = Arrays.asList(
+                new Tuple2<Integer, Integer>(1,100),
+                new Tuple2<Integer,Integer>(2,90),
+                new Tuple2<Integer,Integer>(3,60)
+        );
+
+        JavaPairRDD<Integer,String> students = sc.parallelizePairs(studentList);
+        JavaPairRDD<Integer,Integer> scores = sc.parallelizePairs(scoreList);
+
+        JavaPairRDD<Integer,Tuple2<String,Integer>> studentScores = students.join(scores);
+
+        studentScores.foreach(new VoidFunction<Tuple2<Integer, Tuple2<String, Integer>>>() {
+            @Override
+            public void call(Tuple2<Integer, Tuple2<String, Integer>> t) throws Exception {
+                System.out.println("student id："+t._1);
+                System.out.println("student name："+t._2._1);
+                System.out.println("student score："+t._2._2);
+                System.out.println("===============================");
+            }
+        });
+        sc.close();
     }
 }

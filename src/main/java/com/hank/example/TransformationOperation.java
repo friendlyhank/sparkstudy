@@ -6,6 +6,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.VoidFunction;
 import scala.Tuple2;
 
@@ -21,7 +22,8 @@ public class TransformationOperation {
 //        map();
 //        filter();
 //        flatmap();
-        groupByKey();
+//        groupByKey();
+        reduceByKey();
     }
 
     /**
@@ -150,5 +152,40 @@ public class TransformationOperation {
         });
         //关闭JavaSparkContext
         sc.close();
+    }
+
+    /**
+     * 键值对reduceByKey:统计每个班级的总分
+     */
+    public static void reduceByKey(){
+        SparkConf conf = new SparkConf().setMaster("local").setAppName("reduceByKey");
+
+        JavaSparkContext sc = new JavaSparkContext(conf);
+
+        //
+        List<Tuple2<String,Integer>> scoreList = Arrays.asList(
+            new Tuple2<String,Integer>("class1",80),
+                new Tuple2<String,Integer>("class2",75),
+                new Tuple2<String,Integer>("class1",90),
+                new Tuple2<String,Integer>("class2",65)
+        );
+
+        JavaPairRDD<String,Integer> scores = sc.parallelizePairs(scoreList);
+
+        //键值对操作
+        JavaPairRDD<String,Integer> totalScores = scores.reduceByKey(new Function2<Integer, Integer, Integer>() {
+            @Override
+            public Integer call(Integer score1, Integer score2) throws Exception {
+                return score1 + score2;
+            }
+        });
+
+        //foreach
+        totalScores.foreach(new VoidFunction<Tuple2<String, Integer>>() {
+            @Override
+            public void call(Tuple2<String, Integer> t) throws Exception {
+                System.out.println(t._1+":"+t._2);
+            }
+        });
     }
 }

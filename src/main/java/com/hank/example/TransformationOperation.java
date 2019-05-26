@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * 转化操作实战
+ * 常见的RDD转换操作
  */
 public class TransformationOperation {
     public static void main(String[] args) {

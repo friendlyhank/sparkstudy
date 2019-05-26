@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 常见的RDD行动操作
+ */
 public class ActionOperation {
     public static void main(String[] args) {
 //        reduce();

@@ -31,5 +31,6 @@ public class NetWordCount {
 
         sc.start();
         sc.awaitTermination();
+        sc.stop();
     }
 }

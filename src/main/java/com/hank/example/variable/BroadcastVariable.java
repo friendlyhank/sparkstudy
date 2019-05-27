@@ -40,5 +40,7 @@ public class BroadcastVariable {
                 System.out.println(t);
             }
         });
+
+        sc.close();
     }
 }

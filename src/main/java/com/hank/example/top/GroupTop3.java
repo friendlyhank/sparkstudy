@@ -78,7 +78,7 @@ public class GroupTop3 {
                     Integer score =scoreIterator.next();
                     System.out.println(score);
                 }
-                System.out.println("=======================================");
+                System.out.println("======================================");
             }
         });
 
